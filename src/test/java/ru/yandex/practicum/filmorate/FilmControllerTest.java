@@ -11,7 +11,10 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FilmControllerTest {
 
@@ -51,11 +54,28 @@ class FilmControllerTest {
     }
 
     @Test
+    void shouldNotFailWhenReleaseDateIs_1895_12_28() {
+        Film film = getValidFilm();
+        film.setReleaseDate(LocalDate.of(1895, 12, 28));
+
+        assertTrue(validator.validate(film).isEmpty());
+    }
+
+
+    @Test
     void shouldFailWhenDurationNegative() {
         Film film = getValidFilm();
         film.setDuration(-10);
 
         assertFalse(validator.validate(film).isEmpty());
+    }
+
+    @Test
+    void shouldNotFailWhenDurationIsOne() {
+        Film film = getValidFilm();
+        film.setDuration(1);
+
+        assertTrue(validator.validate(film).isEmpty());
     }
 
     @Test

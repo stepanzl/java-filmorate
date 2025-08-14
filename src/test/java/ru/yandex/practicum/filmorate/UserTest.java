@@ -70,6 +70,15 @@ class UserTest {
         assertFalse(violations.isEmpty(), "Ожидалась ошибка для даты рождения в будущем");
     }
 
+    @Test
+    void birthdayExactlyToday_shouldPassValidation() {
+        User user = makeValidUser();
+        user.setBirthday(LocalDate.now());
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertTrue(violations.isEmpty(), "Дата рождения сегодня должна проходить валидацию");
+    }
+
+
     private User makeValidUser() {
         User user = new User();
         user.setEmail("test@example.com");

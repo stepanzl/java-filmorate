@@ -38,11 +38,12 @@ public class FilmController {
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
         if (!films.containsKey(film.getId())) {
+            log.error("Failed to update film: film with id {} not found", film.getId());
             throw new ValidationException("Film not found");
         }
         validateFilm(film);
         films.put(film.getId(), film);
-        log.info("Film updated: " + film);
+        log.info("Film updated: {}", film);
         return film;
     }
 
@@ -54,7 +55,7 @@ public class FilmController {
     private void validateFilm(Film film) {
         if (film.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
             String message = "Film release date cannot be earlier than 28.12.1895";
-            log.error(message + ": " + film.getReleaseDate());
+            log.error("{}: {}", message, film.getReleaseDate());
             throw new ValidationException(message);
         }
     }

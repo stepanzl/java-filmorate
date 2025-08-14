@@ -47,11 +47,27 @@ class FilmTest {
     }
 
     @Test
+    void descriptionLengthExactly200_shouldPassValidation() {
+        Film film = makeValidFilm();
+        film.setDescription("A".repeat(200));
+        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        assertTrue(violations.isEmpty(), "Описание ровно 200 символов должно проходить валидацию");
+    }
+
+    @Test
     void futureReleaseDate_shouldFailValidation() {
         Film film = makeValidFilm();
         film.setReleaseDate(LocalDate.now().plusDays(1));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertFalse(violations.isEmpty(), "Ожидалась ошибка для даты релиза в будущем");
+    }
+
+    @Test
+    void releaseDateExactly1895_12_28_shouldPassValidation() {
+        Film film = makeValidFilm();
+        film.setReleaseDate(LocalDate.of(1895, 12, 28));
+        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        assertTrue(violations.isEmpty(), "Дата релиза 1895-12-28 должна проходить валидацию");
     }
 
     @Test
@@ -68,6 +84,14 @@ class FilmTest {
         film.setDuration(-100);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertFalse(violations.isEmpty(), "Ожидалась ошибка для отрицательной длительности");
+    }
+
+    @Test
+    void durationExactlyOne_shouldPassValidation() {
+        Film film = makeValidFilm();
+        film.setDuration(1);
+        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        assertTrue(violations.isEmpty(), "Длительность 1 должна проходить валидацию");
     }
 
     private Film makeValidFilm() {
