@@ -66,6 +66,15 @@ class UserControllerTest {
     }
 
     @Test
+    void createUser_withBirthdayToday_shouldNotFailValidation() {
+        User user = makeValidUser();
+        user.setBirthday(LocalDate.now());
+
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertTrue(violations.isEmpty(), "Дата рождения сегодня должна проходить валидацию");
+    }
+
+    @Test
     void updateUser_whenNotExists_shouldThrowException() {
         User user = makeValidUser();
         user.setId(999L);
