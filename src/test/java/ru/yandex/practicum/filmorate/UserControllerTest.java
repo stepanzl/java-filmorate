@@ -7,13 +7,19 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.UserController;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UserControllerTest {
 
@@ -22,7 +28,9 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        userController = new UserController();
+        UserStorage storage = new InMemoryUserStorage();
+        UserService userService = new UserService(storage);
+        userController = new UserController(userService);
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
@@ -79,7 +87,8 @@ class UserControllerTest {
         User user = makeValidUser();
         user.setId(999L);
 
-        assertThrows(ValidationException.class, () -> userController.updateUser(user));
+        assertThrows(ru.yandex.practicum.filmorate.exception.NotFoundException.class,
+                () -> userController.updateUser(user));
     }
 
     private User makeValidUser() {
@@ -91,4 +100,3 @@ class UserControllerTest {
         return user;
     }
 }
-

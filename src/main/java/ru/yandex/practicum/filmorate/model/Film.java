@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @EqualsAndHashCode(of = {"id"})
@@ -21,4 +23,7 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private int duration;
+
+    // set of userIds who liked this film (ensures one like per user)
+    private Set<Long> likes = new HashSet<>();
 }
