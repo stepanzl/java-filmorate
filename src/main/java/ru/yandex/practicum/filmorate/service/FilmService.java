@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -34,6 +35,42 @@ public class FilmService {
         this.userStorage = userStorage;
         this.genreStorage = genreStorage;
         this.mpaStorage = mpaStorage;
+    }
+
+    // временный адаптер для тестов InMemory имплементации
+    @Deprecated
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+        this(filmStorage, userStorage, new NoopGenreStorage(), new NoopMpaStorage());
+    }
+
+    static final class NoopGenreStorage implements GenreStorage {
+        @Override
+        public List<Genre> findAll() {
+            return List.of(new Genre(1, "TestGenre")); // Пример
+        }
+
+        @Override
+        public Genre findById(int id) {
+            if (id == 1) {
+                return new Genre(1, "TestGenre");
+            }
+            return new Genre(id, "TestGenre" + id);
+        }
+    }
+
+    static final class NoopMpaStorage implements MpaStorage {
+        @Override
+        public List<MpaRating> findAll() {
+            return List.of(new MpaRating(1, "G"));
+        }
+
+        @Override
+        public MpaRating findById(int id) {
+            if (id == 1) {
+                return new MpaRating(1, "G");
+            }
+            return new MpaRating(id, "TestMPA" + id);
+        }
     }
 
     public Film create(Film film) {
