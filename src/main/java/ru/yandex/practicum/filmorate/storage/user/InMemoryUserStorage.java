@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@Qualifier("inMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
     private final Map<Long, User> users = new HashMap<>();
     private long nextId = 1;
@@ -46,5 +48,25 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void delete(Long id) {
         users.remove(id);
+    }
+
+    @Override
+    public void addFriend(Long userId, Long friendId) {
+        throw new UnsupportedOperationException("Not Implemented");
+    }
+
+    @Override
+    public void removeFriend(Long userId, Long friendId) {
+        throw new UnsupportedOperationException("Not Implemented");
+    }
+
+    @Override
+    public Collection<User> getFriends(Long userId) {
+        throw new UnsupportedOperationException("Not Implemented");
+    }
+
+    @Override
+    public Collection<User> getCommonFriends(Long userId, Long otherId) {
+        throw new UnsupportedOperationException("Not Implemented");
     }
 }

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.MpaRating;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
@@ -101,6 +102,7 @@ class FilmControllerTest {
         film.setDescription("Good film");
         film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(100);
+        film.setMpa(new MpaRating(1, "G"));
         return film;
     }
 }
