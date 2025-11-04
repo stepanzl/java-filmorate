@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -11,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class UserService {
     private final UserStorage userStorage;
 
@@ -19,10 +21,12 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
+    @Transactional
     public User create(User user) {
         return userStorage.create(user);
     }
 
+    @Transactional
     public User update(User user) {
         return userStorage.update(user);
     }
@@ -35,12 +39,14 @@ public class UserService {
         return userStorage.findById(id);
     }
 
+    @Transactional
     public void addFriend(Long userId, Long friendId) {
         findById(userId);
         findById(friendId);
         userStorage.addFriend(userId, friendId);
     }
 
+    @Transactional
     public void removeFriend(Long userId, Long friendId) {
         findById(userId);
         findById(friendId);

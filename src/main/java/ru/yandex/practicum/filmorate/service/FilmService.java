@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -12,6 +13,7 @@ import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
@@ -72,30 +75,34 @@ public class FilmService {
         }
     }
 
+    @Transactional
     public Film create(Film film) {
         enrichFilmMetadata(film);
         return filmStorage.create(film);
     }
 
+    @Transactional
     public Film update(Film film) {
         enrichFilmMetadata(film);
         return filmStorage.update(film);
     }
 
     public List<Film> findAll() {
-        return filmStorage.findAll().stream().collect(Collectors.toList());
+        return new ArrayList<>(filmStorage.findAll());
     }
 
     public Film findById(Long id) {
         return filmStorage.findById(id);
     }
 
+    @Transactional
     public void addLike(Long filmId, Long userId) {
         findById(filmId);
         userStorage.findById(userId);
         filmStorage.addLike(filmId, userId);
     }
 
+    @Transactional
     public void removeLike(Long filmId, Long userId) {
         findById(filmId);
         userStorage.findById(userId);
@@ -103,8 +110,7 @@ public class FilmService {
     }
 
     public List<Film> getPopular(int count) {
-        return filmStorage.getMostPopular(count).stream()
-                .collect(Collectors.toList());
+        return new ArrayList<>(filmStorage.getMostPopular(count));
     }
 
     private void enrichFilmMetadata(Film film) {
