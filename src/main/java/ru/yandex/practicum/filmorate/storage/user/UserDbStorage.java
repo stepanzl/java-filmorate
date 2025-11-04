@@ -150,9 +150,6 @@ public class UserDbStorage implements UserStorage {
     public void removeFriend(Long userId, Long friendId) {
         try {
             int updated = jdbcTemplate.update(DELETE_FRIENDSHIP, userId, friendId);
-            if (updated == 0) {
-                throw new NotFoundException("Friend " + friendId + " not found for user " + userId);
-            }
         } catch (DataAccessException e) {
             log.error("Failed to remove friend {} for user {}", friendId, userId, e);
             throw new RuntimeException("Failed to remove friend", e);
