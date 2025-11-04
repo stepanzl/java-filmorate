@@ -42,7 +42,8 @@ VALUES ('Inception', 'Фантастический триллер', '2010-07-16'
 
 ```sql
 INSERT INTO film_genres (film_id, genre_id)
-VALUES (1, 2), (1, 5);
+VALUES (1, 2),
+       (1, 5);
 ```
 
 ### 3. Пользователь ставит лайк фильму
@@ -64,7 +65,8 @@ VALUES (1, 2, 'PENDING');
 ```sql
 UPDATE friendships
 SET status = 'CONFIRMED'
-WHERE requester_id = 1 AND addressee_id = 2;
+WHERE requester_id = 1
+  AND addressee_id = 2;
 ```
 
 ### 6. Получить топ-3 жанра, которые пользователь лайкал чаще всего
@@ -72,8 +74,8 @@ WHERE requester_id = 1 AND addressee_id = 2;
 ```sql
 SELECT g.name AS genre_name, COUNT(*) AS like_count
 FROM film_likes fl
-JOIN film_genres fg ON fg.film_id = fl.film_id
-JOIN genres g ON g.id = fg.genre_id
+         JOIN film_genres fg ON fg.film_id = fl.film_id
+         JOIN genres g ON g.id = fg.genre_id
 WHERE fl.user_id = :user_id
 GROUP BY g.id, g.name
 ORDER BY like_count DESC
