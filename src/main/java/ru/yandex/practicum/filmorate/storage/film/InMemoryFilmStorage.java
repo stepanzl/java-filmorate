@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@Qualifier("inMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> films = new HashMap<>();
     private long nextId = 1;
@@ -46,6 +48,21 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public void delete(Long id) {
         films.remove(id);
+    }
+
+    @Override
+    public void addLike(Long filmId, Long userId) {
+        throw new UnsupportedOperationException("Not Implemented");
+    }
+
+    @Override
+    public void removeLike(Long filmId, Long userId) {
+        throw new UnsupportedOperationException("Not Implemented");
+    }
+
+    @Override
+    public Collection<Film> getMostPopular(int count) {
+        throw new UnsupportedOperationException("Not Implemented");
     }
 }
 

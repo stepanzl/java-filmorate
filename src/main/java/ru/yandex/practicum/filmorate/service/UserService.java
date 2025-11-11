@@ -1,28 +1,32 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class UserService {
     private final UserStorage userStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
+    @Transactional
     public User create(User user) {
         return userStorage.create(user);
     }
 
+    @Transactional
     public User update(User user) {
         return userStorage.update(user);
     }
@@ -35,43 +39,28 @@ public class UserService {
         return userStorage.findById(id);
     }
 
+    @Transactional
     public void addFriend(Long userId, Long friendId) {
-        User user = findById(userId);
-        User friend = findById(friendId);
-
-        user.getFriends().add(friendId);
-        friend.getFriends().add(userId);
-
-        userStorage.update(user);
-        userStorage.update(friend);
+        findById(userId);
+        findById(friendId);
+        userStorage.addFriend(userId, friendId);
     }
 
+    @Transactional
     public void removeFriend(Long userId, Long friendId) {
-        User user = findById(userId);
-        User friend = findById(friendId);
-
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(userId);
-
-        userStorage.update(user);
-        userStorage.update(friend);
+        findById(userId);
+        findById(friendId);
+        userStorage.removeFriend(userId, friendId);
     }
 
     public List<User> getFriends(Long userId) {
-        User user = findById(userId);
-        return user.getFriends().stream()
-                .map(userStorage::findById)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        findById(userId);
+        return new ArrayList<>(userStorage.getFriends(userId));
     }
 
     public List<User> getCommonFriends(Long userId, Long otherId) {
-        User u1 = findById(userId);
-        User u2 = findById(otherId);
-
-        return u1.getFriends().stream()
-                .filter(u2.getFriends()::contains)
-                .map(userStorage::findById)
-                .collect(Collectors.toList());
+        findById(userId);
+        findById(otherId);
+        return new ArrayList<>(userStorage.getCommonFriends(userId, otherId));
     }
 }
